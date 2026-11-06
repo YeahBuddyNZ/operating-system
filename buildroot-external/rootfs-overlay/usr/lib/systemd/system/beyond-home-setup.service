@@ -1,0 +1,15 @@
+[Unit]
+Description=Beyond Home first-boot setup
+Wants=haos-supervisor.service
+After=haos-supervisor.service
+RequiresMountsFor=/mnt/data
+ConditionPathExists=!/mnt/data/beyond/setup-done
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/beyond-home-setup
+Restart=on-failure
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target

@@ -41,6 +41,9 @@ curl -fsL -o "${data_dir}/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL
 
 # Persist build-time updater channel
 jq -n --arg channel "${channel}" '{"channel": \$channel}' > "${data_dir}/supervisor/updater.json"
+
+# Beyond Home: our app store is there from the first boot (the built-in ones are added beside it)
+jq -n '{"repositories": ["https://github.com/YeahBuddyNZ/Beyond-Home"]}' > "${data_dir}/supervisor/store.json"
 EOF
 
 # Tear down docker and unmount the data partition before shrinking
