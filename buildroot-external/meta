@@ -2,7 +2,8 @@ VERSION_MAJOR="19"
 VERSION_MINOR="0"
 VERSION_SUFFIX="dev0"
 
-HAOS_NAME="Home Assistant OS"
+# What people read. HAOS_ID stays "haos": the Supervisor finds the OS by it (CPE product).
+HAOS_NAME="Beyond Home OS"
 HAOS_ID="haos"
 
 DEPLOYMENT="development"

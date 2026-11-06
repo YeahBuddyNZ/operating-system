@@ -1,0 +1,35 @@
+#!/bin/sh
+# Beyond Home: on the first boot, install the Beyond Home app, start it and put it in the sidebar.
+# Runs until it has worked once, then never again (the marker lives on the data partition).
+set -e
+
+MARKER="/mnt/data/beyond/setup-done"
+APP="780cc5b2_beyond_home" # sha1("https://github.com/yeahbuddynz/beyond-home")[:8] + "_" + its slug
+
+cli() {
+    docker exec hassio_cli "$@"
+}
+
+# The CLI calls them apps now; older ones only know addons.
+apps() {
+    cli ha apps "$@" 2> /dev/null || cli ha addons "$@"
+}
+
+echo "[INFO] Waiting for the Supervisor"
+until cli ha supervisor info > /dev/null 2>&1; do
+    sleep 10
+done
+
+if ! apps info "${APP}" 2> /dev/null | grep -q "^version: [0-9]"; then
+    echo "[INFO] Installing Beyond Home (the first time builds it on this box, about ten minutes)"
+    cli ha store reload > /dev/null 2>&1 || true
+    apps install "${APP}" --no-progress
+fi
+
+echo "[INFO] Starting Beyond Home"
+apps options "${APP}" --ingress-panel=true > /dev/null 2>&1 || true
+apps start "${APP}" || true
+
+mkdir -p "$(dirname "${MARKER}")"
+touch "${MARKER}"
+echo "[INFO] Beyond Home is set up"
